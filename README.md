@@ -1,4 +1,4 @@
-The shiny app for this analysis can be found [here](https://meenal-narsinghani.shinyapps.io/shiny_application/)
+The shiny app for this analysis can be found [here](https://meenal-narsinghani.shinyapps.io/shiny_application/).
 
 **Introduction**
 
