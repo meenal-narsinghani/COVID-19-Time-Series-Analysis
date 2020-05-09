@@ -1,3 +1,5 @@
+The shiny app for this analysis can be found [here](https://meenal-narsinghani.shinyapps.io/shiny_application/)
+
 **Introduction**
 
 The world has recently been affected by the pandemic, Covid-19 that has
@@ -59,10 +61,9 @@ to visualize the ACF and PACF plots. These provide certain guidelines on
 the order of p and q, based on which a model could be fit on the
 dataset.
 
-![](./media/media/image1.png){width="6.268055555555556in"
-height="2.8020833333333335in"}
+![](./media/media/image1.png)
 
-Figure 1 - Plot for original time-series
+*Figure 1 - Plot for original time-series*
 
 To build the model, the auto.arima() function suggests an ARIMA(0,0,4)
 with a non-zero mean on the differenced dataset. The same function
@@ -74,10 +75,9 @@ till q = 1. The PACF plot suggests that there is an AR component till
 perhaps p = 3. The auto.arima results support this, suggesting that a
 ARIMA(1,2,2) model might be appropriate.
 
-![](./media/media/image2.png){width="6.268055555555556in"
-height="3.0625in"}
+![](./media/media/image2.png)
 
-Figure 2- Plot for time-series with diff(2)
+*Figure 2- Plot for time-series with diff(2)*
 
 Based on these intuitions and preliminary data results, the modeling
 process is conducted.
@@ -100,7 +100,7 @@ Below is a simple comparison of the same.
   ARIMA(2,2,4)   954.3   4                     0.06      No lack of fit   2 residual lags significant
   ARIMA(4,2,4)   961.5   2                     0.004     Lack of fit      Good residual plot
 
-Table 1 - Model diagnostics comparison
+*Table 1 - Model diagnostics comparison*
 
 The model diagnostics involved checking the residual plots for
 normality, the ACF of the residuals and the histogram of the residuals
@@ -118,15 +118,13 @@ while only ARIMA(1,2,2) and ARIMA(2,2,4) has a high p-value for a
 Box-Ljung test with lag = 10. These two models will be examined a little
 more closely to see which presents with the better fit.
 
-![](./media/media/image3.png){width="5.552083333333333in"
-height="2.9895833333333335in"}
+![](./media/media/image3.png)
 
-Figure 3 - Residuals from ARIMA(1,2,2)
+*Figure 3 - Residuals from ARIMA(1,2,2)*
 
-![](./media/media/image4.png){width="5.604166666666667in"
-height="3.0277777777777777in"}
+![](./media/media/image4.png)
 
-Figure 4 - Residuals from ARIMA(2,2,4)
+*Figure 4 - Residuals from ARIMA(2,2,4)*
 
 The time plot shows some variation in the data. The histogram for the
 residuals suggest normality in both the cases (better for ARIMA(2,2,4)
@@ -144,13 +142,11 @@ significance of the coefficients for both the models using the
 coefficient and the standard error of the coefficient. Both the models
 have coefficient p-values that are \< 0.05, suggesting significance.
 
-![](./media/media/image5.png){width="2.8847222222222224in"
-height="2.2916666666666665in"}
+![](./media/media/image5.png)
 
-Figure 5 - Forecast from ARIMA(1,2,2)
+*Figure 5 - Forecast from ARIMA(1,2,2)*
 
-![](./media/media/image6.png){width="2.8876170166229223in"
-height="2.28125in"}
+![](./media/media/image6.png)
 
 *Figure* *6 - Forecast from ARIMA(2,2,4)*
 
@@ -187,7 +183,7 @@ increasing.
   4/26/2020   23933          23906          27892    14%                 14%
   4/27/2020   25008          24945          29435    15%                 15%
 
-Table 2 - Comparison of model forecast vs actual data
+*Table 2 - Comparison of model forecast vs actual data*
 
 **R Shiny Application**
 
@@ -271,14 +267,12 @@ predictors).
 
 **Data Tab**
 
-![](./media/media/image8.png){width="6.270138888888889in"
-height="2.40625in"}
+![](./media/media/image8.png)
 
 **Model Summary Tab**
 
-![](./media/media/image9.png){width="6.34249343832021in" height="2.5in"}
+![](./media/media/image9.png)
 
 **Forecast Tab**
 
-![](./media/media/image10.png){width="6.399305555555555in"
-height="2.375in"}
+![](./media/media/image10.png)
