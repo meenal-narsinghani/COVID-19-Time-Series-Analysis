@@ -122,6 +122,7 @@ more closely to see which presents with the better fit.
 
 *Figure 3 - Residuals from ARIMA(1,2,2)*
 
+
 ![](./media/media/image4.png)
 
 *Figure 4 - Residuals from ARIMA(2,2,4)*
@@ -146,6 +147,7 @@ have coefficient p-values that are \< 0.05, suggesting significance.
 
 *Figure 5 - Forecast from ARIMA(1,2,2)*
 
+
 ![](./media/media/image6.png)
 
 *Figure* *6 - Forecast from ARIMA(2,2,4)*
@@ -156,10 +158,9 @@ The forecasts look to follow the same trend, with pretty similar results
 for the next 10 days as is shown in the plot below. This was calculated
 for immediate next 10 days.
 
-![](./media/media/image7.png){width="5.790972222222222in"
-height="2.53125in"}
+![](./media/media/image7.png)
 
-Figure 7 - Forecasts from both models for 10 days
+*Figure 7 - Forecasts from both models for 10 days*
 
 The recent data for the past 10 days (sourced directly from Google
 tracker) were selected for a general comparison of how the model
