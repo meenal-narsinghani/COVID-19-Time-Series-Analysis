@@ -1,4 +1,3 @@
-The shiny app for this analysis can be found [here](https://meenal-narsinghani.shinyapps.io/shiny_application/).
 
 **Introduction**
 
@@ -20,6 +19,11 @@ was chosen was a single country, India, for this purpose. A R-Shiny
 dashboard was designed and built to scale the models to all the
 countries. This provides the flexibility to the user to select a country
 and create a model of their choice to achieve a forecast.
+
+The RShiny dashboard that was built could be found [here](https://meenal-narsinghani.shinyapps.io/shiny_application/). Below is a small snapshot of the same.
+
+![](./media/media/Covid-19_Dashboard.jpg)
+
 
 **Data**
 
