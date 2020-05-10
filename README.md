@@ -90,19 +90,18 @@ process is conducted.
 
 Based on the results of the ACF and PACF plots, multiple iterations of
 the ARIMA model were run. The main criteria for comparison were the AIC
-values (lower value is better), Box-Ljung test for residual analysis and
+values (lower value is better), Box-Ljung test (with lag = 10) for residual analysis and
 the forecast value itself to get a check how different the values are.
 Below is a simple comparison of the same.
 
-                         Box Test (lag = 10)                              
-  -------------- ------- --------------------- --------- ---------------- ---------------------------------------------
-  Model          AIC     df                    p-value   Result           Comment
-  ARIMA(1,2,2)   969.4   7                     0.052     No lack of fit   Suggested by auto.arima on original dataset
-  ARIMA(2,2,2)   966.7   6                     0.015     Lack of fit      
-  ARIMA(0,2,4)   965.6   6                     0.013     Lack of fit      
-  ARIMA(1,2,0)   993.2   9                     \<0.01    Lack of fit      
-  ARIMA(2,2,4)   954.3   4                     0.06      No lack of fit   2 residual lags significant
-  ARIMA(4,2,4)   961.5   2                     0.004     Lack of fit      Good residual plot
+| Model         | AIC   | df    | p-value   | Result         |
+| ------------- |:-----:| -----:|:---------:|:--------------:|
+| ARIMA(1,2,2)  | 969.4 | 7     | 0.052     | No lack of fit |
+| ARIMA(2,2,2)  | 966.7 | 6     | 0.015     | Lack of fit    |
+| ARIMA(0,2,4)  | 965.6 | 6     | 0.013     | Lack of fit    |
+| ARIMA(1,2,0)  | 993.2 | 9     | \<0.01    | Lack of fit    |
+| ARIMA(2,2,4)  | 954.3 | 4     | 0.06      | No lack of fit |
+| ARIMA(4,2,4)  | 961.5 | 2     | 0.004     | Lack of fit    |
 
 *Table 1 - Model diagnostics comparison*
 
