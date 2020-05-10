@@ -1,1 +1,4 @@
 theme: jekyll-theme-cayman
+
+title: COVID-19 Global Forecasting
+description: 'Time series analysis and daily forecasting of COVID-19 spread in countries around world'
