@@ -1,0 +1,262 @@
+---
+title: "R Notebook - Building Time Series Models for the Covid-19 dataset for India"
+output: html_notebook
+---
+
+**Loading the libraries**
+```{r, warning=FALSE, error=FALSE,message=FALSE}
+library(tseries)
+library(forecast)
+library(dplyr)
+
+rm(list = ls())
+```
+
+
+**Loading the dataset**
+```{r}
+train_data <- read.csv("./covid19-global-forecasting-week-4/train.csv")
+```
+
+
+*Function to role up the dataset at Country level to get the cumulative cases*
+```{r}
+total_cases <- function(cname)
+{
+  country <- train_data[train_data$Country_Region == cname,]
+  
+  new_cases <- country %>% dplyr::select(Date, ConfirmedCases) %>%
+                              group_by(Date) %>% 
+                                mutate(TotalConfirmedCases = sum(ConfirmedCases)) %>%
+                                  ungroup()%>%
+                                    dplyr::select(Date, TotalConfirmedCases) %>% 
+                                      distinct() %>% 
+                                        dplyr::select(TotalConfirmedCases) %>%
+                                          filter(TotalConfirmedCases > 0)
+
+  #Reading the TS file
+  original_ts <- as.ts((new_cases$TotalConfirmedCases))
+  return(original_ts)
+}
+```
+
+*Function to plot the the time series, ACF and PACF - inout argument ts_object*
+```{r}
+plot_ts <- function(ts_object)
+{
+  par(mfrow=c(1,3))
+  plot(ts_object)
+  acf(ts_object)
+  pacf(ts_object)
+  
+}
+```
+
+#### Data is selected for India
+
+```{r, fig.width = 10, fig.height = 5}
+india_cases_ts <- total_cases("India")
+plot_ts(india_cases_ts)
+```
+From the time series plot we see that there is an upward increasing trend, and hence it is non-stationary (as expected). The ACF is decaying slowly and the PACF cuts off after lag 1. From the plots it is evident that the series is not stationary. However we will perform the ADF test to prove it statistically
+    
+Augmented Dickey-Fuller Test
+  - Null hypothesis, H0: There is a unit root, i.e., homogeneous nonstationarity.
+  - Alternative hypothesis, H1: There is no unit root, i.e., stationarity.
+
+Therefore, a small p-value would indicates stationarity and large p-value indicates homogeneous nonstationarity, i.e., there is a unit root.
+
+The test statistic has a special distribution that is not commonly seen, so it make more sense to just look at the p-value.
+
+```{r}
+adf.test(india_cases_ts)
+```
+
+Since p-value is large, we fail to reject the Null hypothesis. This implies non-stationarity.
+Some order differential might be appropriate for this series
+
+Plotting the time series for a larger time series.
+```{r}
+india_cases_ts %>% ggtsdisplay(lag.max=40)
+```
+
+Creating a difference of the order 2 on the dataset and visualizing to glimpse at the plots
+
+```{r}
+india_cases_ts %>% diff() %>% diff() %>% ggtsdisplay(lag.max = 20)
+```
+
+
+Taking second order differencing in order to make the series stationary - 
+
+```{r}
+india_cases_ts_diff <- india_cases_ts %>% diff(differences = 2)
+
+plot_ts(india_cases_ts_diff)
+
+adf.test(india_cases_ts_diff)
+```
+
+--------------------
+
+Running a few model variations with individual diagnostics for the same
+
+Auto ARIMA
+```{r}
+auto_fit <- auto.arima(india_cases_ts)
+auto_fit
+Box.test(auto_fit$residuals, lag = 10, fitdf = 3)
+checkresiduals(auto_fit)
+
+
+par(mfrow=c(1,1))
+plot(india_cases_ts, xlim = c(50,80))
+points(fitted(auto_fit), pch = 20, col = "grey")
+points(fitted(auto_fit), type = "l", col = "red")
+
+```
+
+
+ARIMA(2,2,2)
+```{r}
+fit1 <- arima(india_cases_ts, order = c(2,2,2))
+fit1
+Box.test(fit1$residuals, lag = 10, fitdf = 4)
+checkresiduals(fit1)
+
+
+par(mfrow=c(1,1))
+plot(india_cases_ts)
+points(fitted(fit1), pch = 20, col = "grey")
+points(fitted(fit1), type = "l", col = "red")
+
+
+```
+
+
+ARIMA(0,2,4)
+```{r}
+fit2 <- arima(india_cases_ts, order = c(0,2,4))
+fit2
+Box.test(fit2$residuals, lag = 10, fitdf = 4)
+checkresiduals(fit2)
+
+par(mfrow=c(1,1))
+plot(india_cases_ts)
+points(fitted(fit2), pch = 20, col = "grey")
+points(fitted(fit2), type = "l", col = "red")
+
+```
+
+
+ARIMA(1,2,0)
+```{r}
+fit3 <- arima(india_cases_ts, order = c(1,2,0))
+fit3
+Box.test(fit3$residuals, lag = 10, fitdf = 1)
+checkresiduals(fit3)
+
+par(mfrow=c(1,1))
+plot(india_cases_ts)
+points(fitted(fit3), pch = 20, col = "grey")
+points(fitted(fit3), type = "l", col = "red")
+
+```
+
+
+ARIMA(2,2,4)
+```{r}
+fit4 <- arima(india_cases_ts, order = c(2,2,4))
+fit4
+Box.test(fit4$residuals, lag = 10, fitdf = 6)
+checkresiduals(fit4)
+
+par(mfrow=c(1,1))
+plot(india_cases_ts, xlim = c(50,80))
+points(fitted(fit4), pch = 20, col = "grey")
+points(fitted(fit4), type = "l", col = "red")
+
+```
+
+
+ARIMA(4,2,4)
+```{r}
+fit5 <- arima(india_cases_ts, order = c(4,2,4))
+fit5
+Box.test(fit5$residuals, lag = 10, fitdf = 8)
+checkresiduals(fit5)
+
+par(mfrow=c(1,1))
+plot(india_cases_ts)
+points(fitted(fit5), pch = 20, col = "grey")
+points(fitted(fit5), type = "l", col = "red")
+
+```
+
+
+-------------------
+
+Compare the models built by ARIMA(1,2,2) and ARIMA(2,2,4)
+
+```{r}
+#Variable importance of ARIMA(1,2,2)
+(1-pnorm(abs(auto_fit$coef)/sqrt(diag(auto_fit$var.coef))))*2
+#Variable importane of ARIMA(2,2,4)
+(1-pnorm(abs(fit4$coef)/sqrt(diag(fit4$var.coef))))*2
+
+```
+
+Forecast for both the models
+```{r}
+par(mfrow = c(1,2))
+plot(forecast(auto_fit, h = 10))
+plot(forecast(fit4, h = 10))
+
+forecast(auto_fit, h = 10)
+forecast(fit4, h = 10)
+
+```
+
+
+--------------------------------------------------------------------------------------------------------------
+
+Additional Code
+
+--------------------------------------------------------------------------------------------------------------
+
+
+Taking a log transform of the data
+
+```{r}
+india_cases_ts %>% log() %>% ggtsdisplay(lag.max=40)
+```
+
+```{r}
+india_cases_ts %>% log() %>% diff() %>% ggtsdisplay(lag.max=40)
+```
+
+
+```{r}
+auto.arima(india_cases_ts %>% log())
+```
+
+---------------------------------------------------
+
+```{r}
+total_cases_new <- function(cname)
+{
+  country <- train_data[train_data$Country_Region == cname,]
+  
+  new_cases <- country %>% dplyr::select(Date, ConfirmedCases) %>%
+                              group_by(Date) %>% 
+                                mutate(TotalConfirmedCases = sum(ConfirmedCases)) %>%
+                                  ungroup()%>%
+                                    dplyr::select(Date, TotalConfirmedCases) %>% 
+                                      distinct() %>%
+                                          filter(TotalConfirmedCases > 0)
+
+  #Reading the TS file
+  return(new_cases)
+}
+```
+
